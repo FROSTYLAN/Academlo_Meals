@@ -25,41 +25,16 @@ app.use('/api/v1/orders', ordersRouter);
 app.use('*', globalErrorHandler);
 
 // Models
-const { User } = require('./models/user.model');
-const { Restaurant } = require('./models/restaurant.model');
-const { Meal } = require('./models/meal.model');
-const { Order } = require('./models/order.model');
-const { Review } = require('./models/review.model');
+const { initModels } = require('./models/initModels');
+
+//Establish models relations
+initModels();
 
 db.authenticate()
   .then(() => {
     console.log('Database authenticated');
   })
   .catch(err => console.log(err));
-
-/********* Establish models relations **********/
-
-// 1 User <---> M Review
-User.hasMany(Review);
-Review.belongsTo(User);
-
-// 1 User <--->   M Order
-User.hasMany(Order);
-Order.belongsTo(User);
-
-// 1 Order <---> 1 Meal
-Meal.hasOne(Order);
-Order.belongsTo(Meal);
-
-//  1 restaurant <---> M Meal
-Restaurant.hasMany(Meal);
-Meal.belongsTo(Restaurant);
-
-// 1 Restaurant <---> M Review
-Restaurant.hasMany(Review);
-Review.belongsTo(Restaurant);
-
-/********* /Establish models relations **********/
 
 db.sync()
   .then(() => {
